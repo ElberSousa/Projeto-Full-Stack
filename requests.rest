@@ -1,0 +1,34 @@
+POST http://localhost:3003/user/signup
+Content-Type: application/json
+
+{
+	"name": "Gabriel",
+    "nickname": "gabriel123",
+	"email": "gabriel@lbn.com",
+	"password": "123456"
+}
+
+###
+
+POST  http://localhost:3003/user/login
+Content-Type: application/json
+
+{
+    "nicknameOrEmail": "gabriel@lbn.com",
+	"password": "123456"
+}
+
+###
+
+GET  http://localhost:3003/user/profile/30324399-b349-4181-95ef-3cf45e8fb70a
+Content-Type: application/json
+
+
+###
+
+GET  http://localhost:3003/user/search-by-name
+Content-Type: application/json
+
+{
+    "name": "gabriel"
+}
