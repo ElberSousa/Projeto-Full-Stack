@@ -9,3 +9,4 @@ userRouter.post('/signup', userController.signUp);
 userRouter.post('/login', userController.login);
 userRouter.get('/profile/:id', userController.profile);
 userRouter.get('/search-by-name', userController.search);
+userRouter.get('/feed', userController.getFeed)

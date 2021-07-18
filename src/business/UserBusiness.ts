@@ -58,17 +58,32 @@ class UserBusiness {
     return acessToken;
   }
 
-  async profile(id: string) {
-    const profile = new UserDatabase()
-    const person = await profile.getProfile(id)
-    return person
-  }
+  async profile (id: string){
+    const userDatabase = new UserDatabase()
+    const profile = await userDatabase.getProfile(id)
+    const photosProfile = await userDatabase.getPhotosProfile(id)
 
+    return [profile, photosProfile]
+}
   async name(name: string) {
     const profile = new UserDatabase()
     const profileName = await profile.getProfileByName(name)
     return profileName
   }
+
+  async getFeed (token: string){
+    const authenticator = new Authenticator()
+    const accessToken = authenticator.getData(token)
+    
+    if(!accessToken){
+        throw new Error("Token Invalido!")            
+    }
+            
+    const userDatabase = new UserDatabase()
+    const resultFeed = await userDatabase.getFeedInformation(accessToken.id)
+
+    return resultFeed
+}
 }
 
 export default new UserBusiness(

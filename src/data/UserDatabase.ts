@@ -1,6 +1,10 @@
 import { BaseDatabase } from './BaseDatabase';
 
 export class UserDatabase extends BaseDatabase {
+  private static TABLE_NAME = 'USER_DATA';
+  private static TABLE_NAME_IMAGE = 'IMAGE_DATA';
+  private static TABLE_NAME_FOLLOW = 'FOLLOWERS_DATA';
+
   public async userCheck(nickname: string, email: string): Promise<void> {
     try {
       const result = await this.getConnection()
@@ -66,6 +70,16 @@ export class UserDatabase extends BaseDatabase {
     }
   }
 
+  public async getPhotosProfile(id: string) {
+    const result = await this.getConnection()
+      .select('file')
+      .from(UserDatabase.TABLE_NAME_IMAGE)
+      .where({
+        author: id
+      });
+    return result;
+  }
+
   public async getProfileByName(name: string): Promise<any> {
     try {
       const result = await this.getConnection()
@@ -79,5 +93,27 @@ export class UserDatabase extends BaseDatabase {
     } catch (error) {
       throw new Error(error.sqlMessage || error.message);
     }
+  }
+
+  public async getFeedInformation(token: string) {
+    const result = await this.getConnection().raw(
+      `
+        SELECT ${UserDatabase.TABLE_NAME}.name,
+        ${UserDatabase.TABLE_NAME}.nickname, 
+        ${UserDatabase.TABLE_NAME_IMAGE}.subtitle, 
+        ${UserDatabase.TABLE_NAME_IMAGE}.date, 
+        ${UserDatabase.TABLE_NAME_IMAGE}.file, 
+        ${UserDatabase.TABLE_NAME_IMAGE}.collection, 
+        ${UserDatabase.TABLE_NAME_IMAGE}.id_tag 
+        FROM ${UserDatabase.TABLE_NAME_FOLLOW}
+        INNER JOIN ${UserDatabase.TABLE_NAME}
+        ON ${UserDatabase.TABLE_NAME_FOLLOW}.id_followed = ${UserDatabase.TABLE_NAME}.id
+        INNER JOIN ${UserDatabase.TABLE_NAME_IMAGE}
+        ON ${UserDatabase.TABLE_NAME}.id = ${UserDatabase.TABLE_NAME_IMAGE}.author
+        WHERE id_follow = '${token}'
+        `
+    );
+
+    return result[0];
   }
 }

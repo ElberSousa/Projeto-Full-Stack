@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import UserBusiness from '../business/UserBusiness';
+import { BaseDatabase } from '../data/BaseDatabase';
 import { loginInputDTO, userInputDTO } from '../model/User';
 
 export class UserController {
@@ -53,14 +54,17 @@ export class UserController {
   profile = async (req: Request, res: Response) => {
     try {
       const id = req.params.id;
-      const profileData = await UserBusiness.profile(id);
-      res.status(200).send({ profileData });
-    } catch (error) {
-      res.status(error.code || 400).send({
-        error: error.message
+      const [infoProfile, photos] = await UserBusiness.profile(id);
+
+      res.status(200).send({
+        infoProfile,
+        photos
       });
+    } catch (error) {
+      res.status(400).send({ error: error.message });
     }
-  };
+    await BaseDatabase.destroyConnection();
+  }
 
   search = async (req: Request, res: Response) => {
     try {
@@ -72,5 +76,16 @@ export class UserController {
         error: error.message
       });
     }
+  };
+
+  getFeed = async (req: Request, res: Response) => {
+    try {
+      const token = req.headers.authorization as string;
+      const feed = await UserBusiness.getFeed(token);
+      res.status(200).send({ feed });
+    } catch (error) {
+      res.status(400).send({ error: error.message });
+    }
+    await BaseDatabase.destroyConnection();
   };
 }
