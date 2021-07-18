@@ -9,3 +9,4 @@ export interface loginInputDTO {
   nicknameOrEmail: string;
   password: string;
 }
+

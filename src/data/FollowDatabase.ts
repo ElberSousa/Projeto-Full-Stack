@@ -26,10 +26,10 @@ export class FollowDatabase extends BaseDatabase {
     try {
       await this.getConnection().raw(
         `
-                DELETE FROM ${FollowDatabase.TABLE_NAME}
-                WHERE id_follow = '${id_follow}'
-                AND id_followed = '${id_followed}'
-                `
+        DELETE FROM ${FollowDatabase.TABLE_NAME}
+        WHERE id_follow = '${id_follow}'
+        AND id_followed = '${id_followed}'
+        `
       );
     } catch (error) {
       throw new Error(error.sqlMessage || error.message);
